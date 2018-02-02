@@ -5,7 +5,8 @@
           <i class="fa fa-bars" aria-hidden="true"></i>
         </mu-icon-button>
       </mu-appbar>
-      <scroller :shouldRefresh="updated" style="height:calc(100vh - 56px);">
+      <loading v-if="loading"></loading>
+      <scroller :shouldRefresh="!loading" :starty="savePosition.y" style="height:calc(100vh - 56px);" @scroller="getScroller">
         <mu-list>
           <div v-for="topic in topics" :key="topic.id">
             <div class="topic-title-wrap">
@@ -29,30 +30,59 @@
 </template>
 <script>
 import Vue from "vue";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      updated: false
+      loading: true,
+      scroller: {}
     };
   },
-  computed: Object.assign({}, mapState(["topics"])),
-  methods: Object.assign({}, mapActions(["fetchTopics"]), {
-    createAt(dateStr) {
-      const filter = Vue.filter("filterDateStr");
-      return filter(dateStr, "yy/MM/dd");
+  computed: Object.assign(
+    {
+      savePosition: function() {
+        return (
+          this.$store.state.savePosition[this.$route.name] || { x: 0, y: 0 }
+        );
+      }
+    },
+    mapState(["topics"])
+  ),
+  methods: Object.assign(
+    {},
+    mapActions(["fetchTopics"]),
+    mapMutations(["updateSavePosition"]),
+    {
+      createAt(dateStr) {
+        const filter = Vue.filter("filterDateStr");
+        return filter(dateStr, "yy/MM/dd");
+      },
+      getScroller(scroller) {
+        this.scroller = scroller;
+        this.$store.commit("updateSavePosition", {
+          name: this.$route.name,
+          data: { x: 0, y: 0 }
+        });
+      }
     }
-  }),
+  ),
   created() {
     this.fetchTopics().then(topics => {
-      this.updated = true;
+      this.loading = false;
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    this.updateSavePosition({
+      name: from.name,
+      data: { x: this.scroller.x, y: this.scroller.y }
+    });
+    next();
   }
 };
 </script>
 
 <style scoped lang="scss">
-.appbar{
+.appbar {
   position: relative;
   z-index: 111111;
 }

@@ -1,14 +1,27 @@
 <template>
   <div>
-    <mu-circular-progress :size="60" color="red"/>
+    <loading v-if="this.id !== topic.id"></loading>
+    <scroller v-else :shouldRefresh="!loading">
+      <div  v-html="topic.content"></div>
+    </scroller>
   </div>
 </template>
 
 <script>
-import { fetchTopicDetail } from "@/api/topic-detail.js";
+import { mapActions, mapState } from "vuex";
 export default {
-  mounted() {},
-  created() {}
+  data() {
+    return { id: "", loading: true };
+  },
+  methods: Object.assign({}, mapActions(["fetchTopicDetail"])),
+  computed: Object.assign({}, mapState(["topic"])),
+  created() {
+    let id = this.$route.params.id;
+    this.id = id;
+    this.fetchTopicDetail({ id }).then(() => {
+      this.loading = false;
+    });
+  }
 };
 </script>
 

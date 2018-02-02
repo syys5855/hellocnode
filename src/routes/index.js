@@ -7,7 +7,12 @@ import topicDetail from '@views/topic-detail';
 
 let routes = [{
     path: '/',
-    component: topics
+    name: 'list',
+    component: topics,
+    // meta: {
+    //     keepAlive: true
+    // }
+
 }, {
     path: '/topic/:id',
     name: '/topic',

@@ -6,7 +6,10 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         topics: [],
-        topic: {}
+        topic: {},
+        savePosition: {
+
+        }
     },
     mutations,
     actions
