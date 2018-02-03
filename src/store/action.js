@@ -1,9 +1,9 @@
 import { topics } from '@/api/topics';
 import { topicDetail } from '@/api/topic-detail';
 const actions = {
-    fetchTopics({ commit }) {
-        return topics().then((json) => {
-            commit('updateTopics', { data: json.data });
+    fetchTopics({ commit }, { concat = false }) {
+        return topics({ page: this.state.currPage, limit: this.state.currPageSize }).then((json) => {
+            commit('updateTopics', { data: json.data, concat });
             return json.data;
         })
     },

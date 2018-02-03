@@ -6,7 +6,7 @@
         </mu-icon-button>
       </mu-appbar>
       <loading v-if="loading"></loading>
-      <scroller :shouldRefresh="!loading" :starty="savePosition.y" style="height:calc(100vh - 56px);" @scroller="getScroller">
+      <scroller  :starty="savePosition.y" :load-fun="loadMore" style="height:calc(100vh - 56px);" @scroller="getScroller">
         <mu-list>
           <div v-for="topic in topics" :key="topic.id">
             <div class="topic-title-wrap">
@@ -51,7 +51,7 @@ export default {
   methods: Object.assign(
     {},
     mapActions(["fetchTopics"]),
-    mapMutations(["updateSavePosition"]),
+    mapMutations(["updateSavePosition", "updateCurrentPage"]),
     {
       createAt(dateStr) {
         const filter = Vue.filter("filterDateStr");
@@ -63,13 +63,22 @@ export default {
           name: this.$route.name,
           data: { x: 0, y: 0 }
         });
+      },
+      loadData() {
+        this.loading = true;
+        this.fetchTopics({ concat: true }).then(topics => {
+          this.loading = false;
+          // this.scroller.refresh();
+        });
+      },
+      loadMore() {
+        this.updateCurrentPage({ data: 1 });
+        this.loadData();
       }
     }
   ),
   created() {
-    this.fetchTopics().then(topics => {
-      this.loading = false;
-    });
+    this.loadData();
   },
   beforeRouteLeave(to, from, next) {
     this.updateSavePosition({

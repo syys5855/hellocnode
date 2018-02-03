@@ -1,6 +1,6 @@
 import { apiPrefix, fetchResolve } from './variable';
 const topicsUrl = `${apiPrefix}/topics`;
 
-export const topics = () => {
-    return fetch(topicsUrl).then(fetchResolve());
+export const topics = (params) => {
+    return fetch(`${topicsUrl}?${Object.entries(params).map(param=>param.join('=')).join('&')}`).then(fetchResolve());
 }

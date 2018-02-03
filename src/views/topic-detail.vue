@@ -1,7 +1,7 @@
 <template>
   <div>
     <loading v-if="this.id !== topic.id"></loading>
-    <scroller v-else :shouldRefresh="!loading">
+    <scroller v-else>
       <div  v-html="topic.content"></div>
     </scroller>
   </div>
