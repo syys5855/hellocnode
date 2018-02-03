@@ -7,11 +7,9 @@ const store = new Vuex.Store({
     state: {
         topics: [],
         currPage: 1,
-        currPageSize: 40,
+        currPageSize: 20,
         topic: {},
-        savePosition: {
-
-        },
+        savePosition: {},
     },
     mutations,
     actions

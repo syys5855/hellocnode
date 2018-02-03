@@ -1,7 +1,7 @@
 <template>
   <div>
     <loading v-if="this.id !== topic.id"></loading>
-    <scroller v-else>
+    <scroller :update-at="updateAt" v-else>
       <div  v-html="topic.content"></div>
     </scroller>
   </div>
@@ -11,7 +11,7 @@
 import { mapActions, mapState } from "vuex";
 export default {
   data() {
-    return { id: "", loading: true };
+    return { id: "", updateAt: 0 };
   },
   methods: Object.assign({}, mapActions(["fetchTopicDetail"])),
   computed: Object.assign({}, mapState(["topic"])),
@@ -19,7 +19,7 @@ export default {
     let id = this.$route.params.id;
     this.id = id;
     this.fetchTopicDetail({ id }).then(() => {
-      this.loading = false;
+      this.updateAt = Date.now();
     });
   }
 };

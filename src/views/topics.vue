@@ -6,7 +6,7 @@
         </mu-icon-button>
       </mu-appbar>
       <loading v-if="loading"></loading>
-      <scroller  :starty="savePosition.y" :load-fun="loadMore" style="height:calc(100vh - 56px);" @scroller="getScroller">
+      <scroller :update-at="updateAt"  :starty="savePosition.y" :load-fun="loadMore" style="height:calc(100vh - 56px);" @scroller="getScroller">
         <mu-list>
           <div v-for="topic in topics" :key="topic.id">
             <div class="topic-title-wrap">
@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       loading: true,
-      scroller: {}
+      scroller: {},
+      updateAt: Date.now()
     };
   },
   computed: Object.assign(
@@ -46,7 +47,7 @@ export default {
         );
       }
     },
-    mapState(["topics"])
+    mapState(["topics", "currPage"])
   ),
   methods: Object.assign(
     {},
@@ -64,21 +65,23 @@ export default {
           data: { x: 0, y: 0 }
         });
       },
-      loadData() {
+      loadData({ concat = false }) {
         this.loading = true;
-        this.fetchTopics({ concat: true }).then(topics => {
+        this.fetchTopics({ concat }).then(topics => {
           this.loading = false;
-          // this.scroller.refresh();
+          this.updateAt = Date.now();
         });
       },
       loadMore() {
         this.updateCurrentPage({ data: 1 });
-        this.loadData();
+        this.loadData({ concat: true });
       }
     }
   ),
   created() {
-    this.loadData();
+    this.currPage === 1
+      ? this.loadData({ concat: false })
+      : ((this.loading = false), (this.updateAt = Date.now));
   },
   beforeRouteLeave(to, from, next) {
     this.updateSavePosition({

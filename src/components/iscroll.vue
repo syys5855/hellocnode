@@ -2,21 +2,20 @@
   <div class="scroll-wrapper" ref="wrapper">
     <div class="scroller">
       <slot></slot>
-      <div class="scroller-pull up">pull up load more</div>
+      <div class="scroller-pull up" v-if="typeof loadFun==='function'">{{status.active?'release to load data':'pull up load'}}</div>
     </div>
   </div>
 </template>
 
 <script>
 import IScroll from "iscroll";
-let scroller;
 function preventDefault(e) {
   e.preventDefault();
 }
 export default {
   name: "scroller",
   props: {
-    shouldRefresh: Boolean,
+    updateAt: Number,
     starty: {
       type: Number,
       default: 0
@@ -28,40 +27,83 @@ export default {
       status: {
         active: false
       },
-      offsetHeight: 30
+      offsetHeight: 30,
+      threshold: 100
     };
   },
-  created() {},
   mounted() {
     this.$nextTick(function() {
       const wrapper = this.$refs.wrapper;
       wrapper.addEventListener("touchmove", preventDefault);
-      scroller = new IScroll(wrapper, {
+      // scroller 不需要监听，不定义在data上
+      this.scroller = new IScroll(wrapper, {
         startY: this.starty,
-        probeType: 1
+        probeType: 1,
+        click: true
       });
-      scroller.on("scroll", () => {
+      this.scroller.on("scroll", () => {
         if (
           !this.status.active &&
-          Math.abs(scroller.y - scroller.maxScrollY) > 100
+          this.scroller.y < this.scroller.maxScrollY &&
+          Math.abs(this.scroller.y - this.scroller.maxScrollY) > this.threshold
         ) {
           this.status.active = true;
-          scroller.maxScrollY -= this.offsetHeight;
+          this.scroller.maxScrollY -= this.offsetHeight;
         }
       });
 
-      scroller.on("scrollEnd", () => {
+      this.scroller.on("scrollEnd", () => {
         typeof this.loadFun === "function" &&
           this.status.active &&
           this.loadFun();
       });
-      this.$emit("scroller", scroller);
+
+      this.$emit("scroller", this.scroller);
     });
   },
-  updated() {
-    this.status.active = false;
-    scroller && scroller.refresh();
-    console.log("updated", scroller);
+  destroyed() {
+    this.scroller.destroy();
+    this.scroller = null;
+  },
+  watch: {
+    updateAt(newVal) {
+      console.log(newVal);
+      setTimeout(() => {
+        this.refresh();
+        this.status.active = false;
+      }, 10);
+    }
+  },
+  methods: {
+    refresh() {
+      console.log("refresh immediately...");
+      this.scroller.refresh();
+      console.log("refresh again if need...");
+      this.refreshIfNeed();
+    },
+    refreshIfNeed() {
+      let wrapper = this.$refs.wrapper;
+      let allImg = Array.from(wrapper.querySelectorAll("img"))
+        .filter(img => !img.complete)
+        .map(img => {
+          return new Promise((res, rej) => {
+            img.onload = function() {
+              res();
+            };
+            img.onerror = function() {
+              res();
+            };
+          });
+        });
+
+      console.log("allImg length", allImg.length);
+      allImg.length > 0
+        ? Promise.all(allImg).then(() => {
+            console.log("allimg response then refresh...");
+            this.scroller.refresh();
+          })
+        : console.log("don't need refresh again");
+    }
   }
 };
 </script>
