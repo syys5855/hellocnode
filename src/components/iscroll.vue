@@ -39,25 +39,26 @@ export default {
       this.scroller = new IScroll(wrapper, {
         startY: this.starty,
         probeType: 1,
-        click: true
+        click: true,
       });
-      this.scroller.on("scroll", () => {
-        if (
-          !this.status.active &&
-          this.scroller.y < this.scroller.maxScrollY &&
-          Math.abs(this.scroller.y - this.scroller.maxScrollY) > this.threshold
-        ) {
-          this.status.active = true;
-          this.scroller.maxScrollY -= this.offsetHeight;
-        }
-      });
-
-      this.scroller.on("scrollEnd", () => {
-        typeof this.loadFun === "function" &&
-          this.status.active &&
-          this.loadFun();
-      });
-
+      if(typeof this.loadFun==='function'){
+        this.scroller.on("scroll", () => {
+          if (
+            !this.status.active &&
+            this.scroller.y < this.scroller.maxScrollY &&
+            Math.abs(this.scroller.y - this.scroller.maxScrollY) > this.threshold
+          ) {
+            this.status.active = true;
+            this.scroller.maxScrollY -= this.offsetHeight;
+          }
+        });
+  
+        this.scroller.on("scrollEnd", () => {
+          typeof this.loadFun === "function" &&
+            this.status.active &&
+            this.loadFun();
+        });
+      }
       this.$emit("scroller", this.scroller);
     });
   },
