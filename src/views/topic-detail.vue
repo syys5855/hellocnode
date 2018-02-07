@@ -17,7 +17,7 @@ export default {
     return {
       id: "",
       updateAt: 0,
-      items: new Array(18).fill(1).map((val, index) => index)
+      items: new Array(100).fill(1).map((val, index) => index)
     };
   },
   components: {

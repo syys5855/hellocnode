@@ -1,7 +1,7 @@
 <template>
   <div class="picker-wrap">
     <div class="picker" :style="pickerStyle">
-        <div class="picker-item" v-for="(item,index) in pickItems" :key="index" :style="item.style">
+        <div class="picker-item" :index="item.index" v-for="(item,index) in pickItems" :key="index" :style="_setItemDeg(item.index)">
             {{item.val}}
         </div>
     </div>
@@ -18,7 +18,10 @@ export default {
       currotate: 0,
       select: 0,
       pickerStyle: {},
-      spin: { start: -9, end: 9, branch: 9 },
+      spin: {
+        index: 0,
+        branch: 9
+      },
       loop: true
     };
   },
@@ -31,19 +34,21 @@ export default {
   created() {},
   computed: {
     pickItems() {
-      let temp = [];
-      for (let k = 0; k < this.items.length; k++) {
-        let data = {
-          val: this.items[k],
-          index: k,
-          style: {
-            transform: `rotate3d(1, 0, 0, ${(-k * 20) %
-              360}deg) translate3d(0px, 0px, 100px)`
-          }
-        };
-        temp.push(data);
+      let len = this.items.length,
+        items = [];
+      let { index, branch } = this.spin;
+      for (
+        let start = index - branch, end = index + branch;
+        start < end;
+        ++start
+      ) {
+        let data = this._getSpinData(start);
+        items.push({
+          val: data,
+          index: start
+        });
       }
-      return temp;
+      return items;
     }
   },
   mounted() {
@@ -81,20 +86,28 @@ export default {
       this._setStyle("end");
     },
     _setStyle(type) {
+      let angle;
       if (type === "move") {
-        let angle = this._calcRotate();
+        angle = this._calcRotate();
         this.pickerStyle = {
           transform: `rotateX(${angle}deg)`,
           transition: ""
         };
-        let rst = this._getValue(this._ceilAngle(angle));
-        console.log(rst.index);
       } else if (type === "end") {
+        angle = this.currotate;
         this.pickerStyle = {
           transform: `rotateX(${this.currotate}deg)`,
           transition: "transform 1s cubic-bezier(0, 0.31, 0.06, 0.97)"
         };
       }
+      let rst = this._ceilAngle(angle) / this.perAngle;
+      this._updateSpin(rst);
+    },
+    _setItemDeg(index) {
+      return {
+        transform: `rotate3d(1, 0, 0, ${(-index * 20) %
+          360}deg) translate3d(0px, 0px, 100px)`
+      };
     },
     _ceilAngle(angle) {
       return this.perAngle * Math.ceil(angle / this.perAngle);
@@ -117,6 +130,15 @@ export default {
         (index > 0 ? index : this.items.length + index) % this.items.length;
       console.log("getValue-->", angle);
       return { index, angle, value: this.items[index] };
+    },
+
+    _getSpinData(index) {
+      let items = this.items;
+      index = index % items.length;
+      return items[index >= 0 ? index : index + items.length];
+    },
+    _updateSpin(selectedIndex) {
+      this.spin.index = selectedIndex;
     }
   }
 };
