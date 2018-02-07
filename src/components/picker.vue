@@ -100,8 +100,8 @@ export default {
           transition: "transform 1s cubic-bezier(0, 0.31, 0.06, 0.97)"
         };
       }
-      let rst = this._ceilAngle(angle) / this.perAngle;
-      this._updateSpin(rst);
+      let selectedIndex = Math.ceil(angle / this.perAngle);
+      this._updateSpin(selectedIndex);
     },
     _setItemDeg(index) {
       return {
@@ -124,12 +124,10 @@ export default {
       this.direction = moveDistance < 0 ? -1 : 1;
       return this.currotate - moveDistance / px2Angle;
     },
-    _getValue(angle = this.currotate) {
-      let index = angle / this.perAngle;
-      index =
-        (index > 0 ? index : this.items.length + index) % this.items.length;
-      console.log("getValue-->", angle);
-      return { index, angle, value: this.items[index] };
+    _getValue() {
+      let value = this._getSpinData(this.spin.index);
+      console.log("getValue-->", value);
+      return { value };
     },
 
     _getSpinData(index) {
