@@ -17,7 +17,6 @@ module.exports = {
         compress: true,
         port: 3334,
         open: true,
-        host: '192.168.1.62',
         publicPath: "/dist/",
         proxy: {
             '/api': {

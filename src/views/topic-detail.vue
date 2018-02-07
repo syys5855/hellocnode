@@ -4,10 +4,9 @@
     <scroller :update-at="updateAt" v-else>
       <div  v-html="topic.content"></div>
     </scroller> -->
-    <picker>
-      
+    <picker :items="items">
     </picker>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -15,7 +14,11 @@ import { mapActions, mapState } from "vuex";
 import picker from "@/components/picker";
 export default {
   data() {
-    return { id: "", updateAt: 0 };
+    return {
+      id: "",
+      updateAt: 0,
+      items: new Array(18).fill(1).map((val, index) => index)
+    };
   },
   components: {
     picker
