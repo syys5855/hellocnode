@@ -2,6 +2,7 @@
 <div>
     <div class="banner-wrap">
         <div class="banner">
+            <!-- <slot></slot> -->
             <div class="banner-item" :class='[item.class,{active:item.index===active,pre:item.index===getIndex(active-1),next:item.index===getIndex(active+1)}]' v-for="(item,index) in bannerItems" :key='index'></div>
         </div>
     </div>
@@ -49,15 +50,6 @@ export default {
       return this.items.map((item, index) => {
         return Object.assign(item, { index });
       });
-
-      let arr = [],
-        active = this.active,
-        branch = this.branch;
-      for (let st = active - branch, ed = active + branch; st <= ed; st++) {
-        let index = this.getIndex(st);
-        arr.push(Object.assign(this.items[index], { index }));
-      }
-      return arr;
     }
   },
   methods: {
@@ -98,8 +90,8 @@ export default {
   background-color: black;
   //   background: url("../asset/999999.png") center no-repeat;
 }
-.orange{
-    background-color: orange;
+.orange {
+  background-color: orange;
 }
 .active {
   transform: translate3d(0, 0, 100px) !important;
