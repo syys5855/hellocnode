@@ -81,7 +81,7 @@ export default {
   created() {
     this.currPage === 1
       ? this.loadData({ concat: false })
-      : ((this.loading = false), (this.updateAt = Date.now));
+      : ((this.loading = false), (this.updateAt = Date.now()));
   },
   beforeRouteLeave(to, from, next) {
     this.updateSavePosition({

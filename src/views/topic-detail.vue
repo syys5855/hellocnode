@@ -4,14 +4,19 @@
     <scroller :update-at="updateAt" v-else>
       <div  v-html="topic.content"></div>
     </scroller> -->
-    <picker :items="items">
-    </picker>
+
+
+    <!-- <picker :items="items">
+    </picker> -->
+
+    <banner></banner>
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 import picker from "@/components/picker";
+import banner from "@/components/banner";
 export default {
   data() {
     return {
@@ -21,7 +26,8 @@ export default {
     };
   },
   components: {
-    picker
+    picker,
+    banner
   },
   methods: Object.assign({}, mapActions(["fetchTopicDetail"])),
   computed: Object.assign({}, mapState(["topic"])),
