@@ -2,7 +2,7 @@
 <div>
     <div class="banner-wrap">
         <div class="banner">
-            <div class="banner-item" :class='[item.class,{active:item.index===active,pre:item.index===preActive,next:item.index===nextActive}]' v-for="(item,index) in bannerItems" :key='index'></div>
+            <div class="banner-item" :class='[item.class,{active:item.index===active,pre:item.index===(active-1)%len,next:item.index===(active+1)%len}]' v-for="(item,index) in items" :key='index'></div>
         </div>
     </div>
     <button @click="clickNext">btnNext</button>
@@ -18,43 +18,26 @@ export default {
       items: [
         {
           class: "red",
-          value: 1
+          value: 1,
+          index: 0
         },
         {
           class: "green",
-          value: 2
+          value: 2,
+          index: 1
         },
         {
           class: "yellow",
-          value: 3
-        },
-        {
-          class: "black",
-          value: 4
+          value: 3,
+          index: 2
         }
       ],
-      active: 0,
-      branch: 1
+      active: 0
     };
   },
   computed: {
-    bannerItems() {
-      let arr = [],
-        active = this.active,
-        branch = this.branch;
-      for (let i = active - branch, l = active + branch; i <= l; i++) {
-        let { item, index } = this.getItems(i);
-        arr.push(Object.assign(item, { index }));
-      }
-      return arr;
-    },
-    preActive() {
-      return this.active - 1 > 0
-        ? this.active - 1
-        : this.items.length - this.active;
-    },
-    nextActive() {
-      return this.active + 1 >= this.items.length ? 0 : this.active + 1;
+    len() {
+      return this.items.length;
     }
   },
   methods: {
@@ -65,15 +48,12 @@ export default {
       return descript;
     },
     clickNext() {
-      this.active = this.getItems(this.active + 1).index;
+      this.active = ++this.active % this.items.length;
     },
     clickPre() {
-      this.active = this.getItems(this.active - 1).index;
-    },
-    getItems(index) {
-      let i = index % this.items.length;
-      i = i < 0 ? this.items.length + i : i;
-      return { item: this.items[i], index: i };
+      let active = this.active - 1;
+      active = active % this.items.length;
+      this.active = active < 0 ? this.items.length + active : active;
     }
   }
 };
@@ -92,9 +72,6 @@ export default {
   background-color: yellow;
   background: url("../asset/999999.png") center no-repeat;
 }
-.black {
-  background-color: #000;
-}
 .active {
   transform: translate3d(0, 0, 100px) !important;
   transform-origin: center bottom;
@@ -106,6 +83,7 @@ export default {
 .next {
   left: 40vw !important;
 }
+
 .banner-wrap {
   position: relative;
   height: 80vh;
@@ -125,7 +103,7 @@ export default {
   top: 0;
   width: 60vw;
   height: 100px;
-  transition: all 0.3s linear;
+  transition: all 0.2s ease-in-out;
   transform: translate3d(0, 0, 0px);
 }
 </style>
