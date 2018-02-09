@@ -2,7 +2,6 @@
 <div>
     <div class="banner-wrap">
         <div class="banner">
-            <!-- <slot></slot> -->
             <div class="banner-item" :class='[item.class,{active:item.index===active,pre:item.index===getIndex(active-1),next:item.index===getIndex(active+1)}]' v-for="(item,index) in bannerItems" :key='index'></div>
         </div>
     </div>
@@ -50,6 +49,7 @@ export default {
       return this.items.map((item, index) => {
         return Object.assign(item, { index });
       });
+
     }
   },
   methods: {

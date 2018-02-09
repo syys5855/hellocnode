@@ -1,0 +1,31 @@
+.active {
+    transform: translate3d(0, 0, 100px) !important;
+    transform-origin: center bottom;
+    left: 20vw !important;
+    opacity: 1 !important;
+}
+
+.pre {
+    left: 0vw !important;
+    opacity: 1 !important;
+}
+
+.next {
+    left: 40vw !important;
+    opacity: 1 !important;
+}
+
+.banner-wrap {
+    position: relative;
+    height: 80vh;
+}
+
+.banner {
+    position: relative;
+    left: 0;
+    top: 50%;
+    height: 100px;
+    transform-style: preserve-3d;
+    perspective-origin: center bottom;
+    perspective: 1200px;
+}

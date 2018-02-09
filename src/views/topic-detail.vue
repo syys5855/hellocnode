@@ -9,14 +9,22 @@
     <!-- <picker :items="items">
     </picker> -->
 
-    <banner></banner>
+      <banner>
+        <banner-item :item-index='0'><div class="test-item red"></div></banner-item>
+        <banner-item :item-index='1'><div class="test-item yellow"></div></banner-item>
+        <banner-item :item-index='2'><div class="test-item black"></div></banner-item>
+        <banner-item :item-index='3'><div class="test-item orange"></div></banner-item>
+        
+      </banner>
     </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 import picker from "@/components/picker";
-import banner from "@/components/banner";
+import banner from "@/components/banner.js";
+import bannerItem from "@/components/banner-item";
+import "@/components/banner.css";
 export default {
   data() {
     return {
@@ -27,7 +35,8 @@ export default {
   },
   components: {
     picker,
-    banner
+    banner,
+    bannerItem
   },
   methods: Object.assign({}, mapActions(["fetchTopicDetail"])),
   computed: Object.assign({}, mapState(["topic"])),
@@ -42,5 +51,23 @@ export default {
 </script>
 
 <style>
-
+.test-item {
+  width: 100%;
+  height: 100%;
+}
+.red {
+  background-color: red;
+}
+.green {
+  background-color: green;
+}
+.yellow {
+  background-color: yellow;
+}
+.black {
+  background-color: black;
+}
+.orange {
+  background-color: orange;
+}
 </style>
